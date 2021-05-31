@@ -1,0 +1,24 @@
+@import "~@neux/render/src/lib/global/style/public-style.scss";
+@import "tools/tools-all.scss";
+
+// global style
+@import 'global/global.scss';
+
+// 客制主題樣式
+// $theme: rdr-theme-config-gen(
+//   $color-hover: $color-hover,
+//   $color-secondary: $color-secondary,
+//   $color-primary: $color-primary,
+//   $black-0: $black,
+//   $black-1: $black-two,
+//   $white-0: $white,
+//   $white-1: $white-two,
+//   $brownish-grey: $brownish-grey,
+//   $brown-grey-0: $brown-grey,
+//   $brown-grey-1: $brown-grey-two,
+//   $very-light-pink-0: $very-light-pink,
+//   $very-light-pink-1: $very-light-pink-two,
+//   $very-light-pink-2: $very-light-pink-three,
+//   $color-click: $color-click,
+// );
+// @include rdr-theme-core($theme);

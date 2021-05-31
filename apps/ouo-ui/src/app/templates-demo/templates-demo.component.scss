@@ -1,0 +1,100 @@
+@import 'public-mixin.scss';
+
+$maxWidth: 944px;
+
+:host {
+  display: block;
+  background-color: #eeeeee;
+  padding: 40px 0;
+
+  @include rwd($nx-screen-bs-large) {
+    padding: 40px 20px;
+  }
+
+  @include rwd($nx-screen-normal-phone-portrait) {
+    padding: 24px 20px;
+  }
+}
+
+.block {
+  max-width: $maxWidth;
+  margin: 0 auto 40px;
+
+  &__title {
+    @include Large-Tilte362-Bold1-Light2-Default-Color1-Left-Aligned;
+    margin-bottom: 40px;
+  }
+
+  &__note{
+    margin-bottom: 10px;
+  }
+
+  &__content {
+    margin-bottom: 20px;
+  }
+
+  &__row {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 40px;
+  }
+
+  &__col {
+    flex-basis: 25%;
+
+    +.block__col {
+      margin-left: 20px;
+    }
+
+    &-title {
+      @include Tilte202-Bold1-Light2-Default-Color1-Left-Aligned;
+      margin-bottom: 20px;
+    }
+  }
+}
+
+.content {
+  display: inline;
+
+  &__header{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 16px;
+
+    h1{
+      margin-bottom: 0;
+    }
+
+    @include rwd($bp-xs){
+      display: block;
+      margin-bottom: 12px;
+
+      h1{
+        margin-bottom: 4px;
+      }
+    }
+  }
+
+  &__container {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  &__block {
+    flex-grow: 1;
+    margin-bottom: 16px;
+  }
+
+  &__title {
+    margin-bottom: 8px;
+  }
+
+  &__list {}
+
+  &__item {
+    @include Body162-Bold1-Light2-Default-Color1-Left-Aligned;
+    margin-bottom: 8px;
+  }
+}

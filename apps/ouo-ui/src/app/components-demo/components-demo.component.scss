@@ -1,0 +1,52 @@
+@import 'public-mixin.scss';
+
+$maxWidth: 944px;
+
+:host {
+  display: block;
+  background-color: #eeeeee;
+  padding: 40px 0;
+
+  @include rwd($nx-screen-bs-large) {
+    padding: 40px 20px;
+  }
+
+  @include rwd($nx-screen-normal-phone-portrait) {
+    padding: 24px 20px;
+  }
+}
+
+.block {
+  &__title {
+    @include Large-Tilte362-Bold1-Light2-Default-Color1-Left-Aligned;
+    max-width: $maxWidth;
+    margin: 0 auto 40px;
+  }
+
+  &__content {
+    max-width: $maxWidth;
+    margin: 0 auto 40px;
+  }
+
+  &__row {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 40px;
+  }
+
+  &__col {
+    flex-basis: 25%;
+
+    +.block__col {
+      margin-left: 20px;
+    }
+
+    &-title {
+      @include Tilte202-Bold1-Light2-Default-Color1-Left-Aligned;
+      margin-bottom: 20px;
+    }
+  }
+}
+
+

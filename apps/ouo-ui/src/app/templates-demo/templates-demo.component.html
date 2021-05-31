@@ -1,0 +1,36 @@
+<div class="block">
+  <div class="block__title">目錄</div>
+  <div class="block__note">更新日期：2021-5-27</div>
+  <div class="content block__content">
+    <div class="content__block">
+      <div class="content__title">元件頁</div>
+      <div class="content__list">
+        <a [routerLink]="'/components-demo'">元件</a>
+      </div>
+    </div>
+    <ng-container *ngFor="let item of templateList">
+      <div class="content__block">
+        <div class="content__title">{{item.type}}區</div>
+        <div class="content__list">
+          <div *ngFor="let list of item.list" class="content__item">
+            <a [routerLink]="list.url">
+              {{item.type}}_{{list.number}} {{list.name}}
+            </a>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</div>
+
+
+<!-- 示意用 -->
+<ng-template #htmlEditor>
+  <div class="neux-editor">
+    <div>html editor</div>
+  </div>
+</ng-template>
+<ng-template #anyTemplate>
+  <div>any 版型</div>
+</ng-template>
+<!-- /示意用 -->

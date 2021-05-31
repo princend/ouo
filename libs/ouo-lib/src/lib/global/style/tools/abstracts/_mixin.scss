@@ -1,0 +1,17 @@
+@mixin sprite($x:0, $y:0, $width:0, $height:0) {
+  background-position: $x $y;
+  width: $width;
+  height: $height;
+}
+
+@mixin ie-hack {
+  @media screen and (-ms-high-contrast: active),(-ms-high-contrast: none){
+    @content;
+  }
+}
+
+@mixin border-half($color: blue) {
+  background-image: linear-gradient(to bottom, $color 0%, $color 51%, transparent 51%);
+  background-size: 100% 1px;
+  height: 1px;
+}

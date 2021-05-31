@@ -1,0 +1,8 @@
+/* You can add global styles to this file, and also import other style files */
+@import 'https://fonts.googleapis.com/icon?family=Material+Icons'; 修復 ie 無法取得字型
+// 防止在編輯時移動版型縮放，高度不對
+.content-panel.scale {
+  .layout-scroll-wrap {
+    height: 100% !important;
+  }
+}

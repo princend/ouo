@@ -1,0 +1,138 @@
+pipeline {
+  agent any
+  tools { nodejs 'NodeJS' }
+
+  parameters {
+    choice(name: 'deploy_env', choices: ['neux-dev', 'neux-sit', 'neux-uat', 'prod'], description: 'Choose Environment')
+  }
+
+  environment {
+    folder_cms = 'ouo-cms'
+    folder_render = 'ouo-render'
+    destination_cms = '/opt/apache-tomcat-cms/webapps/cms'
+    destination_static_files = '/var/www'
+    destination_ssr = '/opt/ouo-render'
+    jboss_cli = '/opt/jboss-eap-7.2/bin/jboss-cli.sh'
+    multi_sites = 'oiu,en,freeway'
+  }
+
+  stages {
+    stage('Show Info') {
+      steps {
+        script {
+          currentBuild.displayName = "#${currentBuild.number} : ${params.deploy_env}"
+        }
+        script {
+          env.multi_sites.tokenize(',').each { site ->
+            echo "Sites include ${site}"
+          }
+        }
+        script {
+          if (params.deploy_env == 'neux-dev') {
+            env.ip_web_server = '192.168.0.36'
+            env.ip_ssr_server = '192.168.0.31'
+          } else if (params.deploy_env == 'neux-sit') {
+            env.ip_web_server = '192.168.0.999'
+            env.ip_ssr_server = '192.168.0.999'
+            env.destination_static_files = '/var/www'
+            env.destination_static_files_main_site = 'html'
+          }
+        }
+        sh """
+          echo "deploy_env=${params.deploy_env}"
+          echo "env.ip_web_server = ${env.ip_web_server}"
+          echo "env.ip_ssr_server = ${env.ip_ssr_server}"
+          echo "env.destination_cms = ${env.destination_cms}"
+          echo "env.destination_ssr = ${env.destination_ssr}"
+          echo "env.WORKSPACE = ${env.WORKSPACE}"
+          node -v
+          npm --version
+        """
+      }
+    }
+    stage('NPM Install') {
+      steps {
+        echo 'NPM Installing..'
+        checkout scm
+        sh 'npm install'
+      }
+    }
+    stage('Build CMS') {
+      steps {
+        echo 'Building CMS..'
+        sh """
+          npm run build-cms:"${params.deploy_env}"
+        """
+      }
+    }
+    stage('Build Render') {
+      steps {
+        echo 'Building Render..'
+        sh """
+          npm run build-render:"${params.deploy_env}"
+        """
+      }
+    }
+    stage('Deploy') {
+      steps {
+        echo 'Deploying..'
+        script {
+          echo 'deploy cms'
+          sh "ssh root@${env.ip_ssr_server} mkdir -p ${env.destination_cms}"
+          sh "scp -r ${env.WORKSPACE}/dist/apps/${env.folder_cms}/* root@${env.ip_ssr_server}:${env.destination_cms}"
+        }
+        script {
+          echo 'deploy ssr_browser : main site'
+          sh "ssh root@${env.ip_web_server} mkdir -p ${env.destination_static_files}/html"
+          sh """ssh root@${env.ip_web_server} sudo find ${env.destination_static_files}/html \"-maxdepth 1 -name 'assets' -o -name '*.js' -o -name '*.css' -o -name 'index.html' | xargs rm -rf\""""
+          sh "scp -r ${env.WORKSPACE}/dist/${env.folder_render}/browser/* root@${env.ip_web_server}:${env.destination_static_files}/html"
+        }
+        script {
+          echo 'deploy ssr_browser : multi sites'
+          env.multi_sites.tokenize(',').each { site ->
+            echo "deploy ssr_browser : multi sites, site = ${site}"
+            sh "ssh root@${env.ip_web_server} mkdir -p ${env.destination_static_files}/${site}"
+            sh """ssh root@${env.ip_web_server} sudo find ${env.destination_static_files}/${site} \"-maxdepth 1 -name 'assets' -o -name '*.js' -o -name '*.css' -o -name 'index.html' | xargs rm -rf\""""
+            sh "scp -r ${env.WORKSPACE}/dist/${env.folder_render}/browser/* root@${env.ip_web_server}:${env.destination_static_files}/${site}"
+            sh "node ${env.WORKSPACE}/dist/${env.folder_render}/browser/getIndexHtmlBySiteId.js --site=${site}"
+            sh "scp ${env.WORKSPACE}/dist/${env.folder_render}/browser/index-${site}.html root@${env.ip_web_server}:${env.destination_static_files}/${site}/index.html"
+            sh "rm -f ${env.WORKSPACE}/dist/${env.folder_render}/browser/index-${site}.html"
+          }
+        }
+        script {
+          echo 'deploy ssr_server'
+          sh "ssh root@${env.ip_ssr_server} mkdir -p ${env.destination_ssr}"
+          sh "scp -r ${env.WORKSPACE}/dist/${env.folder_render}/* root@${env.ip_ssr_server}:${env.destination_ssr}"
+        }
+      }
+    }
+    stage('Restart') {
+      steps {
+        script {
+          echo 'Restart CMS'
+          try {
+            sh """
+              ssh "root@${env.ip_ssr_server}" sh /opt/apache-tomcat-cms/bin/shutdown.sh
+            """
+          }
+          catch (all) {
+            println 'stop CMS failed ' + e.toString()
+          }
+
+          try {
+            sh """
+              ssh "root@${env.ip_ssr_server}" sh /opt/apache-tomcat-cms/bin/startup.sh
+            """
+          }
+          catch (all) {
+            println 'startup CMS failed ' + e.toString()
+          }
+        }
+        script {
+          echo 'Restart SSR'
+          sh "ssh root@${env.ip_ssr_server} sudo systemctl restart ouo-render"
+        }
+      }
+    }
+  }
+}

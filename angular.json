@@ -51,7 +51,9 @@
               "apps/sample-test/src/favicon.ico",
               "apps/sample-test/src/assets"
             ],
-            "styles": ["apps/sample-test/src/styles.scss"],
+            "styles": [
+              "apps/sample-test/src/styles.scss"
+            ],
             "scripts": []
           },
           "configurations": {
@@ -116,7 +118,9 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/sample-test"],
+          "outputs": [
+            "coverage/apps/sample-test"
+          ],
           "options": {
             "jestConfig": "apps/sample-test/jest.config.js",
             "passWithNoTests": true
@@ -145,10 +149,866 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["apps/sample-test-e2e/**/*.{js,ts}"]
+            "lintFilePatterns": [
+              "apps/sample-test-e2e/**/*.{js,ts}"
+            ]
           }
         }
       }
+    },
+    "ouo-ui": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "apps/ouo-ui",
+      "sourceRoot": "apps/ouo-ui/src",
+      "prefix": "ouo-ui",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/apps/ouo-ui",
+            "index": "apps/ouo-ui/src/index.html",
+            "main": "apps/ouo-ui/src/main.ts",
+            "polyfills": "apps/ouo-ui/src/polyfills.ts",
+            "tsConfig": "apps/ouo-ui/tsconfig.app.json",
+            "aot": true,
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "./libs/ouo-lib/src/lib/global/style"
+              ]
+            },
+            "assets": [
+              "apps/ouo-ui/src/favicon.ico",
+              "apps/ouo-ui/src/assets",
+              {
+                "glob": "**/*",
+                "input": "libs/ouo-lib/src/lib/global/images",
+                "output": "assets/images"
+              }
+            ],
+            "styles": [
+              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
+              "apps/ouo-ui/src/styles.scss",
+              "libs/ouo-lib/src/lib/global/style/customizing-style.scss"
+            ],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/ouo-ui/src/environments/environment.ts",
+                  "with": "apps/ouo-ui/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "ouo-ui:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "ouo-ui:build:production"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "ouo-ui:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "apps/ouo-ui/src/test.ts",
+            "polyfills": "apps/ouo-ui/src/polyfills.ts",
+            "tsConfig": "apps/ouo-ui/tsconfig.spec.json",
+            "karmaConfig": "apps/ouo-ui/karma.conf.js",
+            "assets": [
+              "apps/ouo-ui/src/favicon.ico",
+              "apps/ouo-ui/src/assets"
+            ],
+            "styles": [
+              "apps/ouo-ui/src/styles.scss"
+            ],
+            "scripts": []
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "apps/ouo-ui/src/**/*.ts",
+              "apps/ouo-ui/src/**/*.html"
+            ]
+          }
+        }
+      }
+    },
+    "ouo-render": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "apps/ouo-render",
+      "sourceRoot": "apps/ouo-render/src",
+      "prefix": "ouo-render",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "preserveSymlinks": true,
+            "outputPath": "dist/ouo-render/browser",
+            "index": "apps/ouo-render/src/index.html",
+            "main": "apps/ouo-render/src/main.ts",
+            "polyfills": "apps/ouo-render/src/polyfills.ts",
+            "tsConfig": "apps/ouo-render/tsconfig.app.json",
+            "aot": true,
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "./libs/ouo-lib/src/lib/global/style"
+              ]
+            },
+            "assets": [
+              "apps/ouo-render/src/favicon.ico",
+              "apps/ouo-render/src/assets",
+              {
+                "glob": "**/*",
+                "input": "./node_modules/@neux/render/src/lib/global/images",
+                "output": "assets/images"
+              },
+              {
+                "glob": "**/*",
+                "input": "libs/ouo-lib/src/lib/global/images",
+                "output": "assets/images"
+              },
+              {
+                "glob": ".htaccess",
+                "input": "apps/ouo-render/src",
+                "output": "/"
+              },
+              {
+                "glob": "getIndexHtmlBySiteId.js",
+                "input": "apps/ouo-render/node",
+                "output": "/"
+              }
+            ],
+            "styles": [
+              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
+              "./node_modules/@neux/render/src/lib/global/style/public-style.scss",
+              "apps/ouo-render/src/styles.scss",
+              "libs/ouo-lib/src/lib/global/style/customizing-style.scss"
+            ],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/ouo-render/src/environments/environment.ts",
+                  "with": "apps/ouo-render/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
+              ]
+            },
+            "dev": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/ouo-render/src/environments/environment.ts",
+                  "with": "apps/ouo-render/src/environments/environment.neux-dev.ts"
+                }
+              ],
+              "optimization": true,
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "30mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "50kb"
+                }
+              ]
+            },
+            "sit": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/ouo-render/src/environments/environment.ts",
+                  "with": "apps/ouo-render/src/environments/environment.sit.ts"
+                }
+              ],
+              "optimization": true,
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "30mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "50kb"
+                }
+              ]
+            },
+            "uat": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/ouo-render/src/environments/environment.ts",
+                  "with": "apps/ouo-render/src/environments/environment.uat.ts"
+                }
+              ],
+              "optimization": true,
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "30mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "50kb"
+                }
+              ]
+            },
+            "pre-prod": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/ouo-render/src/environments/environment.ts",
+                  "with": "apps/ouo-render/src/environments/environment.pre-prod.ts"
+                }
+              ],
+              "optimization": true,
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "30mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "50kb"
+                }
+              ]
+            },
+            "neux-sit": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/ouo-render/src/environments/environment.ts",
+                  "with": "apps/ouo-render/src/environments/environment.neux-sit.ts"
+                }
+              ],
+              "optimization": true,
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "30mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "50kb"
+                }
+              ]
+            },
+            "neux-uat": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/ouo-render/src/environments/environment.ts",
+                  "with": "apps/ouo-render/src/environments/environment.neux-uat.ts"
+                }
+              ],
+              "optimization": true,
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "30mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "50kb"
+                }
+              ]
+            },
+            "es5": {
+              "tsConfig": "./apps/ouo-render/tsconfig-es5.app.json"
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "ouo-render:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "ouo-render:build:production"
+            },
+            "es5": {
+              "browserTarget": "ouo-render:build:es5"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "ouo-render:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "apps/ouo-render/src/test.ts",
+            "polyfills": "apps/ouo-render/src/polyfills.ts",
+            "tsConfig": "apps/ouo-render/tsconfig.spec.json",
+            "karmaConfig": "apps/ouo-render/karma.conf.js",
+            "assets": [
+              "apps/ouo-render/src/favicon.ico",
+              "apps/ouo-render/src/assets"
+            ],
+            "styles": [
+              "apps/ouo-render/src/styles.scss"
+            ],
+            "scripts": []
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "apps/ouo-render/src/**/*.ts",
+              "apps/ouo-render/src/**/*.html"
+            ]
+          }
+        },
+        "server": {
+          "builder": "@angular-devkit/build-angular:server",
+          "options": {
+            "outputPath": "dist/ouo-render/server",
+            "main": "apps/ouo-render/server.ts",
+            "tsConfig": "apps/ouo-render/tsconfig.server.json",
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "./libs/ouo-lib/src/lib/global/style"
+              ]
+            }
+          },
+          "configurations": {
+            "production": {
+              "outputHashing": "media",
+              "fileReplacements": [
+                {
+                  "replace": "apps/ouo-render/src/environments/environment.ts",
+                  "with": "apps/ouo-render/src/environments/environment.prod.ts"
+                }
+              ],
+              "sourceMap": false,
+              "optimization": true
+            },
+            "dev": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/ouo-render/src/environments/environment.ts",
+                  "with": "apps/ouo-render/src/environments/environment.neux-dev.ts"
+                }
+              ],
+              "sourceMap": false,
+              "optimization": true
+            },
+            "sit": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/ouo-render/src/environments/environment.ts",
+                  "with": "apps/ouo-render/src/environments/environment.sit.ts"
+                }
+              ],
+              "sourceMap": false,
+              "optimization": true
+            },
+            "uat": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/ouo-render/src/environments/environment.ts",
+                  "with": "apps/ouo-render/src/environments/environment.uat.ts"
+                }
+              ],
+              "sourceMap": false,
+              "optimization": true
+            },
+            "pre-prod": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/ouo-render/src/environments/environment.ts",
+                  "with": "apps/ouo-render/src/environments/environment.pre-prod.ts"
+                }
+              ],
+              "sourceMap": false,
+              "optimization": true
+            },
+            "neux-sit": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/ouo-render/src/environments/environment.ts",
+                  "with": "apps/ouo-render/src/environments/environment.neux-sit.ts"
+                }
+              ],
+              "sourceMap": false,
+              "optimization": true
+            },
+            "neux-uat": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/ouo-render/src/environments/environment.ts",
+                  "with": "apps/ouo-render/src/environments/environment.neux-uat.ts"
+                }
+              ],
+              "sourceMap": false,
+              "optimization": true
+            }
+          }
+        },
+        "serve-ssr": {
+          "builder": "@nguniversal/builders:ssr-dev-server",
+          "options": {
+            "browserTarget": "ouo-render:build",
+            "serverTarget": "ouo-render:server"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "ouo-render:build:production",
+              "serverTarget": "ouo-render:server:production"
+            }
+          }
+        },
+        "prerender": {
+          "builder": "@nguniversal/builders:prerender",
+          "options": {
+            "browserTarget": "ouo-render:build:production",
+            "serverTarget": "ouo-render:server:production",
+            "routes": [
+              "/"
+            ]
+          },
+          "configurations": {
+            "production": {}
+          }
+        }
+      }
+    },
+    "ouo-cms": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "apps/ouo-cms",
+      "sourceRoot": "apps/ouo-cms/src",
+      "prefix": "ouo-cms",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "preserveSymlinks": true,
+            "outputHashing": "all",
+            "outputPath": "dist/ouo-cms/browser",
+            "index": "apps/ouo-cms/src/index.html",
+            "main": "apps/ouo-cms/src/main.ts",
+            "polyfills": "apps/ouo-cms/src/polyfills.ts",
+            "tsConfig": "apps/ouo-cms/tsconfig.app.json",
+            "aot": true,
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "./libs/ouo-lib/src/lib/global/style"
+              ]
+            },
+            "assets": [
+              "apps/ouo-cms/src/favicon.ico",
+              {
+                "glob": "**/*",
+                "input": "./node_modules/@neux/cms-core/assets",
+                "output": "assets/"
+              },
+              {
+                "glob": "**/*",
+                "input": "./node_modules/@neux/render/src/lib/global/images",
+                "output": "assets/images"
+              },
+              "apps/ouo-cms/src/assets",
+              {
+                "glob": "**/*",
+                "input": "libs/ouo-lib/src/lib/global/images",
+                "output": "assets/images"
+              },
+              {
+                "glob": ".htaccess",
+                "input": "apps/ouo-cms/src",
+                "output": "/"
+              },
+              {
+                "glob": "**/*",
+                "input": "apps/ouo-cms/src/WEB-INF",
+                "output": "/WEB-INF"
+              },
+              {
+                "glob": "getIndexHtmlBySiteId.js",
+                "input": "apps/ouo-cms/node",
+                "output": "/"
+              }
+            ],
+            "styles": [
+              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
+              "./node_modules/@neux/cms-core/src/lib/global/style/styles.scss",
+              "./node_modules/@neux/render/src/lib/global/style/public-style.scss",
+              "apps/ouo-cms/src/styles.scss",
+              "libs/ouo-lib/src/lib/global/style/customizing-style.scss"
+            ],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/ouo-cms/src/environments/environment.ts",
+                  "with": "apps/ouo-cms/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
+              ]
+            },
+            "dev": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/ouo-cms/src/environments/environment.ts",
+                  "with": "apps/ouo-cms/src/environments/environment.neux-dev.ts"
+                }
+              ],
+              "optimization": true,
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "30mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "50kb"
+                }
+              ]
+            },
+            "sit": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/ouo-cms/src/environments/environment.ts",
+                  "with": "apps/ouo-cms/src/environments/environment.sit.ts"
+                }
+              ],
+              "optimization": true,
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "30mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "50kb"
+                }
+              ]
+            },
+            "uat": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/ouo-cms/src/environments/environment.ts",
+                  "with": "apps/ouo-cms/src/environments/environment.uat.ts"
+                }
+              ],
+              "optimization": true,
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "30mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "50kb"
+                }
+              ]
+            },
+            "pre-prod": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/ouo-cms/src/environments/environment.ts",
+                  "with": "apps/ouo-cms/src/environments/environment.pre-prod.ts"
+                }
+              ],
+              "optimization": true,
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "30mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "50kb"
+                }
+              ]
+            },
+            "neux-sit": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/ouo-cms/src/environments/environment.ts",
+                  "with": "apps/ouo-cms/src/environments/environment.neux-sit.ts"
+                }
+              ],
+              "optimization": true,
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "30mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "50kb"
+                }
+              ]
+            },
+            "neux-uat": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/ouo-cms/src/environments/environment.ts",
+                  "with": "apps/ouo-cms/src/environments/environment.neux-uat.ts"
+                }
+              ],
+              "optimization": true,
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "30mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "50kb"
+                }
+              ]
+            },
+            "es5": {
+              "tsConfig": "./apps/ouo-cms/tsconfig-es5.app.json"
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "ouo-cms:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "ouo-cms:build:production"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "ouo-cms:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "apps/ouo-cms/src/test.ts",
+            "polyfills": "apps/ouo-cms/src/polyfills.ts",
+            "tsConfig": "apps/ouo-cms/tsconfig.spec.json",
+            "karmaConfig": "apps/ouo-cms/karma.conf.js",
+            "assets": [
+              "apps/ouo-cms/src/favicon.ico",
+              "apps/ouo-cms/src/assets"
+            ],
+            "styles": [
+              "apps/ouo-cms/src/styles.scss"
+            ],
+            "scripts": []
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "apps/ouo-cms/src/**/*.ts",
+              "apps/ouo-cms/src/**/*.html"
+            ]
+          }
+        }
+      }
+    },
+    "ouo-lib": {
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/ouo-lib/src/**/*.ts",
+              "libs/ouo-lib/src/**/*.html"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": [
+            "coverage/libs/ouo-lib"
+          ]
+        },
+        "options": {
+          "jestConfig": "libs/ouo-lib/jest.config.js",
+          "passWithNoTests": true
+        }
+      },
+      "root": "libs/ouo-lib",
+      "sourceRoot": "libs/ouo-lib/src",
+      "prefix": "ouo"
     }
   }
 }

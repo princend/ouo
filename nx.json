@@ -14,7 +14,12 @@
     "default": {
       "runner": "@nrwl/workspace/tasks-runners/default",
       "options": {
-        "cacheableOperations": ["build", "lint", "test", "e2e"]
+        "cacheableOperations": [
+          "build",
+          "lint",
+          "test",
+          "e2e"
+        ]
       }
     }
   },
@@ -24,7 +29,21 @@
     },
     "sample-test-e2e": {
       "tags": [],
-      "implicitDependencies": ["sample-test"]
+      "implicitDependencies": [
+        "sample-test"
+      ]
+    },
+    "ouo-ui": {
+      "tags": []
+    },
+    "ouo-render": {
+      "tags": []
+    },
+    "ouo-cms": {
+      "tags": []
+    },
+    "ouo-lib": {
+      "tags": []
     }
   }
 }

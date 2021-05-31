@@ -1,0 +1,138 @@
+def  packagePaths = ['./cms-core', './core', './render', './ui']
+pipeline {
+  agent any
+  tools { nodejs 'NodeJS' }
+
+  environment {
+    folder_deliver = 'ouo-cms-frontend-deliver'
+    sourceFolderName = 'source'
+    targetFolderName = 'target'
+    sourceBranch = 'UAT'
+    targetBranch = 'main'
+  }
+
+  stages {
+    stage('Show Info') {
+      steps {
+        script {
+          echo 'start run script'
+          sh '''
+            node -v
+            npm --version
+          '''
+        }
+      }
+    }
+    stage('Clean Source And Target') {
+      steps {
+        script {
+          sh """
+              rm -rf ./${env.sourceFolderName}
+              rm -rf ./${env.targetFolderName}
+          """
+        }
+      }
+    }
+    stage('Git Clone ouo-cms-frontend') {
+      steps {
+        script {
+          echo 'Git clone ouo-cms-frontend'
+          sh """
+              git clone --single-branch --branch ${env.sourceBranch} https://github.com/neuxtitanteng/ouo-cms-frontend.git --depth=1
+              mv ./ouo-cms-frontend ./${env.sourceFolderName}
+          """
+        }
+      }
+    }
+    stage('Git Clone ouo-cms-frontend-deliver') {
+      steps {
+        script {
+          sh """
+              git clone --single-branch --branch ${env.targetBranch} https://github.com/neuxtitanteng/ouo-cms-frontend-deliver.git --depth=1
+              mv ./ouo-cms-frontend-deliver ./${env.targetFolderName}
+          """
+        }
+      }
+    }
+    stage('Copy Files') {
+      steps {
+        echo 'Copy files from source to target'
+        fileOperations ([
+          fileDeleteOperation(
+            includes: "${env.targetFolderName}/**/*",
+            excludes: "${env.targetFolderName}/README.md",
+          ),
+          fileCopyOperation(
+            includes: "${env.sourceFolderName}/*",
+            excludes: "${env.targetFolderName}/README.md",
+            flattenFiles: true,
+            targetLocation: env.targetFolderName
+          ),
+          fileDeleteOperation(includes: "${env.targetFolderName}/.npmrc", excludes: '', ),
+          fileDeleteOperation(includes: "${env.targetFolderName}/Jenkinsfile", excludes: '', ),
+          fileDeleteOperation(includes: "${env.targetFolderName}/Jenkinsfile.dev", excludes: '', ),
+          folderDeleteOperation(folderPath: "${env.targetFolderName}/apps"),
+          folderDeleteOperation(folderPath: "${env.targetFolderName}/deploy"),
+          folderDeleteOperation(folderPath: "${env.targetFolderName}/libs"),
+          folderDeleteOperation(folderPath: "${env.targetFolderName}/neux"),
+          folderDeleteOperation(folderPath: "${env.targetFolderName}/tools"),
+          folderDeleteOperation(folderPath: "${env.targetFolderName}/yml"),
+          folderCopyOperation(
+            sourceFolderPath: "${env.sourceFolderName}/apps",
+            destinationFolderPath: "${env.targetFolderName}/apps"
+          ),
+          folderCopyOperation(
+            sourceFolderPath: "${env.sourceFolderName}/libs",
+            destinationFolderPath: "${env.targetFolderName}/libs"
+          ),
+        ])
+      }
+    }
+    stage('package dependencies') {
+      steps {
+        echo 'package cms-core,core,render,ui ,4 librarires'
+        sh """
+          cd ./${env.sourceFolderName}
+          npm install
+          mkdir -p 'neux'
+          cd ..
+        """
+        script {
+          for (packagePath in packagePaths) {
+            sh """
+              cd './${env.sourceFolderName}/neux'
+              npm pack '../node_modules/@neux/${packagePath}'
+              cd ../..
+            """
+          }
+        }
+        fileOperations ([
+          folderCopyOperation(
+            sourceFolderPath: "${env.sourceFolderName}/neux",
+            destinationFolderPath: "${env.targetFolderName}/neux"
+          ),
+        ])
+      }
+    }
+    stage('change package.json dependencies version'){
+      steps{
+        echo 'change 3 folder ouo-cms ouo-render ouo-ui package.json version'
+         sh """
+         node './deploy/replace-config'
+         """
+      }
+    }
+    stage('Push deliver') {
+      steps {
+        echo 'git push ouo-cms-frontend-deliver'
+        sh """
+          cd "./${env.targetFolderName}"
+          git config --global http.postBuffer 2097152000
+          git add .
+          git commit --allow-empty -m 'sync-file-${currentBuild.number}'
+          git push origin ${env.targetBranch}
+         """
+      }
+    }
+  }
+}
